@@ -74,9 +74,9 @@ export default {
     return {
       search: '',
       weatherData: null,
-      latitude: null,
-      longitude: null,
-      apiUrl: 'https://api.openweathermap.org/data/2.5/weather',
+      lat: null,
+      lon: null,
+      apiUrl: 'http://api.openweathermap.org/data/2.5/weather',
       apiKey: '18ca215a560311b1a7a444eba3a60283'
     }
   },
@@ -93,26 +93,30 @@ export default {
   },
   methods: {
     getLocation() {
+      this.$q.loading.show()
       navigator.geolocation.getCurrentPosition
       (position => {
         console.log('position: ', position)
-        this.latitude = position.coords.latitude
-        this.longitude = position.coords.longitude
+        this.lat = position.coords.latitude
+        this.lon = position.coords.longitude
         this.getWeatherByCoords()
       })
     },
     getWeatherByCoords() {
-      this.$axios(`${ this.apiUrl }?lat=${ this.latitude }
-      &lon=${ this.longitude }&appid=${ this.apiKey }
+      this.$q.loading.show()
+      this.$axios(`${ this.apiUrl }?lat=${ this.lat }
+      &lon=${ this.lon }&appid=${ this.apiKey }
       &units=metric`).then(response => {
         this.weatherData = response.data
+        this.$q.loading.hide()
       })
     },
     getWeatherBySearch() {
-      console.log('getWeatherBySearch')
+      this.$q.loading.show()
       this.$axios(`${ this.apiUrl }?q=${ this.search }&appid=${ this.apiKey }
       &units=metric`).then(response => {
         this.weatherData = response.data
+        this.$q.loading.hide()
       })
     }
   }
