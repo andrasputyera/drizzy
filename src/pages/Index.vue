@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex column">
+  <q-page class="flex column" :class="backgroundClass">
     <div class="col q-pt-lg q-px-md">
       <q-input 
         v-model="search"
@@ -52,7 +52,7 @@
           Drizzy <br> Weather
         </div>
         <q-btn 
-          @click="getLocation()"
+          @click="getLocation"
           class="col" 
           flat
         >
@@ -76,8 +76,19 @@ export default {
       weatherData: null,
       latitude: null,
       longitude: null,
-      apiUrl: 'http://api.openweathermap.org/data/2.5/weather',
+      apiUrl: 'https://api.openweathermap.org/data/2.5/weather',
       apiKey: '18ca215a560311b1a7a444eba3a60283'
+    }
+  },
+  computed: {
+    backgroundClass() {
+      if (this.weatherData) {
+        if (this.weatherData.weather[0].icon.endsWith('n')) {
+          return 'bg-night'
+        } else {
+          return 'bg-day'
+        }
+      }
     }
   },
   methods: {
@@ -111,6 +122,10 @@ export default {
 <style lang="sass">
   .q-page
     background: linear-gradient(to bottom, #fc4a1a, #f7b733)
+    &.bg-day
+      background: linear-gradient(to right, #2980b9, #6dd5fa, #ffffff)
+    &.bg-night
+      background: linear-gradient(to right, #232526, #414345)
   .degree
     top: -40px
   .skyline 
