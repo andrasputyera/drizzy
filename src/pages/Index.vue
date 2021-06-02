@@ -42,7 +42,7 @@
       </div>
 
       <div class="col text-center">
-        <img :src="`http://openweathermap.org/img/wn/${ weatherData.weather[0].icon}@2x.png`" alt="Image">
+        <img :src="`https://openweathermap.org/img/wn/${ weatherData.weather[0].icon}@2x.png`" alt="Image">
       </div>
     </template>
     
@@ -76,7 +76,7 @@ export default {
       weatherData: null,
       lat: null,
       lon: null,
-      apiUrl: 'http://api.openweathermap.org/data/2.5/weather',
+      apiUrl: 'https://api.openweathermap.org/data/2.5/weather',
       apiKey: '18ca215a560311b1a7a444eba3a60283'
     }
   },
@@ -94,13 +94,25 @@ export default {
   methods: {
     getLocation() {
       this.$q.loading.show()
-      navigator.geolocation.getCurrentPosition
-      (position => {
-        console.log('position: ', position)
-        this.lat = position.coords.latitude
-        this.lon = position.coords.longitude
-        this.getWeatherByCoords()
-      })
+
+      if (this.$q.platform.is.electron) {
+        this.$axios.get('https://freegeoip.app/json/')
+        .then(response => {
+          this.lat = response.data.latitude
+          this.lon = response.data.longitude
+          this.getWeatherByCoords()
+        })
+      } 
+      
+      else {
+        navigator.geolocation.getCurrentPosition
+        (position => {
+          console.log('position: ', position)
+          this.lat = position.coords.latitude
+          this.lon = position.coords.longitude
+          this.getWeatherByCoords()
+        })
+      } 
     },
     getWeatherByCoords() {
       this.$q.loading.show()
